@@ -30,7 +30,6 @@ module.exports.configuration = function(config) {
     requestOptions.port = port;
     requestOptions.auth = streamUrl.auth || [config.username, config.password].join(':');
   }
-  console.log(requestOptions);
 };
 
 module.exports.callback = function(fn) {
