@@ -1,15 +1,16 @@
-var http = require('http');
-var https = require('https');
-var zlib = require('zlib');
-var oboe = require('oboe');
+var http = require('http'),
+    https = require('https'),
+    oboe = require('oboe'),
+    url = require('url'),
+    zlib = require('zlib');
+
 
 var requestOptions = {
-    hostname: 'stream.gnip.com',
     port: 443,
+    hostname: 'stream.gnip.com',
     method: 'GET',
     headers: { 'accept': '*/*',
                'accept-encoding': 'gzip' },
-    rejectUnauthorized: false
 };
 
 requestOptions.agent = new https.Agent(requestOptions);
@@ -17,9 +18,19 @@ requestOptions.agent = new https.Agent(requestOptions);
 var callback;
 
 module.exports.configuration = function(config) {
-  requestOptions.path = config.path;
-  requestOptions.auth = [config.username, config.password].join(':');
-
+  var streamUrl, port;
+  if(config.path) {
+    requestOptions.path = config.path;
+    requestOptions.auth = [config.username, config.password].join(':');
+  } else {
+    streamUrl = url.parse(config.url);
+    port = streamUrl.port || streamUrl.protocol == 'http' ? 80 : 443; 
+    requestOptions.path = streamUrl.path;
+    requestOptions.hostname = streamUrl.hostname;
+    requestOptions.port = port;
+    requestOptions.auth = streamUrl.auth || [config.username, config.password].join(':');
+  }
+  console.log(requestOptions);
 };
 
 module.exports.callback = function(fn) {
@@ -30,6 +41,10 @@ module.exports.callback = function(fn) {
       .done(fn);
   });
   req.end();
+  req.on('error', function(e) {
+    console.log(e);
+    throw new Error(e);
+  });
 };
 
 
