@@ -1,6 +1,6 @@
 {
   "name": "powersocket",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Connect Gnip Powertrack data to a websocket stream",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,8 @@
   ],
   "author": "Erik Cunningham <djtrinary@gmail.com>",
   "license": "ISC",
-  "dependencies" : {
+  "dependencies": {
+    "lodash": "^3.10.1",
     "oboe": "^2.0.2"
   }
 }
